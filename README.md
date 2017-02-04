@@ -2,4 +2,4 @@
 
 A bookmarklet to download SVG as PNG.
 
-<a href="javascript:alert(42)">TEST</a>
+<https://mbostock.github.io/svjimmy>
