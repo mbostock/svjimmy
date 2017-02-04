@@ -2,4 +2,4 @@
 
 A bookmarklet to download SVG as PNG.
 
-[TEST](javascript:alert(42))
+<a href="javascript:alert(42)">TEST</a>
