@@ -9,23 +9,41 @@
     if (clone.nextElementSibling) visit(element.nextElementSibling, clone.nextElementSibling, callback);
   }
 
-  function inlineStyle(root) {
-    var frame = body.appendChild(document.createElement("iframe")),
-        clone = frame.contentDocument.body.appendChild(root.cloneNode(true));
-
-    visit(root, clone, function(element, clone) {
-      var elementStyle = global.getComputedStyle(element),
-          cloneStyle = frame.contentWindow.getComputedStyle(clone),
-          cloneStyles = clone.getAttribute("style") || "";
-      for (var i = 0, n = elementStyle.length; i < n; ++i) {
-        var name = elementStyle[i],
-            elementValue = elementStyle[name],
-            cloneValue = cloneStyle[name];
-        if (elementValue !== cloneValue) {
-          cloneStyles += ";" + name + ":" + elementValue;
-        }
+  function inlineStyle(source, target) {
+    var sourceStyle = source.ownerDocument.defaultView.getComputedStyle(source),
+        targetStyle = target.ownerDocument.defaultView.getComputedStyle(target),
+        targetStyles = target.getAttribute("style") || "";
+    for (var i = 0, n = sourceStyle.length; i < n; ++i) {
+      var name = sourceStyle[i],
+          sourceValue = sourceStyle[name],
+          targetValue = targetStyle[name];
+      if (sourceValue !== targetValue) {
+        targetStyles += ";" + name + ":" + sourceValue;
       }
-      if (cloneStyles) clone.setAttribute("style", cloneStyles);
+    }
+    if (targetStyles) target.setAttribute("style", targetStyles);
+  }
+
+  function inline(root) {
+    var frame = body.appendChild(document.createElement("iframe")),
+        clone = frame.contentDocument.body.appendChild(root.cloneNode(true)),
+        cloneDefs = frame.contentDocument.createElementNS("http://www.w3.org/2000/svg", "defs");
+
+    visit(root, clone, inlineStyle);
+
+    visit(root, clone, function(source, target) {
+      var href,
+          sourceReferent,
+          targetReferent;
+      if (source.tagName === "use"
+          && source.namespaceURI === "http://www.w3.org/2000/svg"
+          && (href = source.getAttribute("href"))
+          && (sourceReferent = document.querySelector(href))
+          && !(targetReferent = frame.contentDocument.querySelector(href))) {
+        targetReferent = cloneDefs.appendChild(sourceReferent.cloneNode(true));
+        clone.insertBefore(cloneDefs, clone.firstChild);
+        visit(sourceReferent, targetReferent, inlineStyle);
+      }
     });
 
     body.removeChild(frame);
@@ -33,7 +51,7 @@
   }
 
   function serialize(root) {
-    return (new XMLSerializer).serializeToString(inlineStyle(root));
+    return (new XMLSerializer).serializeToString(inline(root));
   }
 
   forEach.call(document.querySelectorAll("svg"), function(svg) {
