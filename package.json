@@ -1,0 +1,21 @@
+{
+  "name": "svjimmy",
+  "version": "0.0.0",
+  "description": "A bookmarklet to download SVG as PNG.",
+  "keywords": [
+    "bookmarklet",
+    "svg",
+    "png"
+  ],
+  "homepage": "https://github.com/mbostock/svjimmy",
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Mike Bostock",
+    "url": "https://bost.ocks.org/mike"
+  },
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mbostock/svjimmy.git"
+  }
+}
