@@ -4,6 +4,9 @@
       styles = document.querySelectorAll("style");
 
   forEach.call(document.querySelectorAll("svg"), function(svg, i) {
+    if (svg.namespaceURI !== "http://www.w3.org/2000/svg") return; // Not really an SVG.
+    if (svg.ownerSVGElement !== svg) return; // An SVG within another SVG.
+
     forEach.call(styles, function(style) { svg.appendChild(style.cloneNode(true)); });
 
     var canvas = document.createElement("canvas"),
