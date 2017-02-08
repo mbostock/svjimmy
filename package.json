@@ -1,6 +1,6 @@
 {
   "name": "svjimmy",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "A bookmarklet to download SVG as PNG.",
   "keywords": [
     "bookmarklet",
