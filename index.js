@@ -16,26 +16,29 @@
         ratio = global.devicePixelRatio || 1,
         width = svg.getAttribute("width") * ratio,
         height = svg.getAttribute("height") * ratio,
-        url = URL.createObjectURL(new Blob([(new XMLSerializer).serializeToString(svg)], {type: "image/svg+xml"}));
+        imageUrl = URL.createObjectURL(new Blob([(new XMLSerializer).serializeToString(svg)], {type: "image/svg+xml"}));
 
     image.onload = function() {
-      context.drawImage(this, 0, 0, width, height);
-      url = URL.revokeObjectURL(url);
-      canvas.toBlob(function(blob) {
-        var a = document.createElement("a");
-        a.download = "untitled.png";
-        a.href = url = URL.createObjectURL(blob);
-        body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-          url = URL.revokeObjectURL(url);
-          body.removeChild(a);
-        }, 10);
-      });
+      setTimeout(function() {
+        context.drawImage(image, 0, 0, width, height);
+        canvas.toBlob(function(blob) {
+          var a = document.createElement("a"),
+              aUrl = URL.createObjectURL(blob);
+          a.download = "untitled.png";
+          a.href = aUrl;
+          body.appendChild(a);
+          setTimeout(function() {
+            a.click();
+            aUrl = URL.revokeObjectURL(aUrl);
+            imageUrl = URL.revokeObjectURL(imageUrl);
+            body.removeChild(a);
+          }, 10);
+        });
+      }, 10);
     };
 
     canvas.width = width;
     canvas.height = height;
-    image.src = url;
+    image.src = imageUrl;
   });
 })(this);
