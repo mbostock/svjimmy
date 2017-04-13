@@ -14,8 +14,9 @@
         context = canvas.getContext("2d"),
         image = new Image,
         ratio = global.devicePixelRatio || 1,
-        width = svg.getAttribute("width") * ratio,
-        height = svg.getAttribute("height") * ratio,
+        rect = svg.getBoundingClientRect(),
+        width = rect.width * ratio,
+        height = rect.height * ratio,
         imageUrl = URL.createObjectURL(new Blob([(new XMLSerializer).serializeToString(svg)], {type: "image/svg+xml"}));
 
     image.onload = function() {
